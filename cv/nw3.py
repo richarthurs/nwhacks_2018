@@ -84,27 +84,27 @@ if len(cnts) == 2:
 
 	((x1,y1), radius1) = cv2.minEnclosingCircle(dot1)
 	M1 = cv2.moments(dot1)
-	dot1_coords = (int(M1["m10"] / M1["m00"]), int(M1["m01"] / M1["m00"]))
+	dot1_coords =.np.matrix([int(M1["m10"] / M1["m00"]), int(M1["m01"] / M1["m00"])])
 
 	((x2,y2), radius2) = cv2.minEnclosingCircle(dot2)
 	M2 = cv2.moments(dot2)
-	dot2_coords = (int(M2["m10"] / M2["m00"]), int(M2["m01"] / M2["m00"]))
+	dot2_coords = np.matrix([int(M2["m10"] / M2["m00"]), int(M2["m01"] / M2["m00"])])
 	
 	scalingConstant = CALIBRATION_DISTANCE/np.hypot(dot2_coords[0] - dot1_coords[0], dot2_coords[1] - dot1_coords[1])
 
-	disp = dot2_coords - dot1_coords
-	unit = disp/np.hypot(disp[0], disp[1])
+	disp = np.matrix(dot2_coords - dot1_coords)
+	unit = np.matrix(disp/np.hypot(disp[0], disp[1]))
 
 	angle = 0
 	if abs(unit[0]) >= abs(unit[1]):
 		if unit[0] < 0:
-			unit = unit * -1
+			unit = np.matrix(unit * -1)
 		angle = np.arctan2(1.0 - unit[0], 0.0 - unit[1])
 	else:
 		if unit[1] < 0:
-			unit = unit * -1
+			unit = np.matrix(unit * -1)
 		angle = np.arctan2(1.0 - unit[1], 0.0 - unit[0])
-	rotationMatrix = np.matrix[[np.cos(angle), -np.sin(angle)],[np.sin(angle), np.cos(angle)]]
+	rotationMatrix = np.matrix([[np.cos(angle), -np.sin(angle)],[np.sin(angle), np.cos(angle)]])
 
 else:
 	print("Could not find both calibration dots")
