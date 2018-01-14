@@ -84,11 +84,18 @@ if len(cnts) == 2:
 
 	((x1,y1), radius1) = cv2.minEnclosingCircle(dot1)
 	M1 = cv2.moments(dot1)
-	dot1_coords =np.matrix([int(M1["m10"] / M1["m00"]), int(M1["m01"] / M1["m00"])])
+	if M1["m00"] != 0:
+		dot1_coords =np.matrix([int(M1["m10"] / M1["m00"]), int(M1["m01"] / M1["m00"])])
+	else: 
+		dot1_coords =np.matrix([0,0])
+	
 
 	((x2,y2), radius2) = cv2.minEnclosingCircle(dot2)
 	M2 = cv2.moments(dot2)
-	dot2_coords = np.matrix([int(M2["m10"] / M2["m00"]), int(M2["m01"] / M2["m00"])])
+	if M2["m00"] != 0:
+		dot2_coords =np.matrix([int(M2["m10"] / M2["m00"]), int(M2["m01"] / M2["m00"])])
+	else: 
+		dot2_coords =np.matrix([0,0])
 	
 	scalingConstant = CALIBRATION_DISTANCE/np.hypot(dot2_coords[0] - dot1_coords[0], dot2_coords[1] - dot1_coords[1])
 
