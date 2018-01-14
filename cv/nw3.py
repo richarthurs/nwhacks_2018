@@ -203,10 +203,10 @@ try:
 
 		dots = dots.tolist()
 
-		indices = numpy.digitize([dot[0] for dot in dots], [i*binSize for i in range(1280.0/binSize)])
+		indices = np.digitize([dot[0] for dot in dots], [i*binSize for i in range(1280/binSize)])
 
 		lines = {}
-		for i in range(1280.0/binSize):
+		for i in range(1280/binSize):
 			lines[i] = []
 
 		for i in range(len(dots)):
@@ -217,7 +217,7 @@ try:
 		else:
 			# compare
 
-			n = range(1280.0)/binSize
+			n = range(1280)/binSize
 
 			while(True):
 				percentMatches = []
@@ -234,8 +234,8 @@ try:
 				if n == 0:
 					break
 
-			for i in range(range(1280.0)/binSize-n):
-				history[len(history)] = lines[i-(range(1280.0)/binSize-n)]
+			for i in range(range(1280)/binSize-n):
+				history[len(history)] = lines[i-(range(1280)/binSize-n)]
 
 		firstTry = False
 
