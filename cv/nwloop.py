@@ -55,6 +55,11 @@ GPIO.setmode(GPIO.BOARD)
 GPIO.setup(GPIO_NUM, GPIO.OUT)
 GPIO.output(GPIO_NUM, GPIO.LOW)
 
+pm = pretty_midi.PrettyMIDI(initial_tempo=80)
+inst = pretty_midi.Instrument(program=0, is_drum=False, name='piano')
+pm.instruments.append(inst)
+velocity = 127
+
 camera = PiCamera()
 camera.resolution = (1000,620)
 raw = PiRGBArray(camera)
@@ -167,134 +172,138 @@ firstTry = True
 threshold = 0.7
 tolerance = binSize
 
-try:
-	while(go):
-		raw2 = PiRGBArray(camera)
-		camera.capture(raw2, format="bgr")
-		frame2 = raw2.array
-	#	print 'captured'
-		#cv2.imshow("suh", frame2)
-		#cv2.waitKey(0)
-	        
-		# grab frame
-		grey = cv2.cvtColor(frame2, cv2.COLOR_BGR2GRAY)
-		blurred = cv2.GaussianBlur(grey, (3,3), 0)
-		#thresh1 = cv2.threshold(blurred, 65, 255, cv2.THRESH_BINARY)[1]
-		#thresh1 = cv2.adaptiveThreshold(blurred, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY, 111,1)
-		#thresh1 = cv2.bitwise_not(thresh1, thresh1)
+num_runs = 3
 
-		thresh1 = cv2.Canny(blurred, 100, 190) #auto_canny(blurred)
+while(num_runs > 1):
+	try:
+		while(go):
+			raw2 = PiRGBArray(camera)
+			camera.capture(raw2, format="bgr")
+			frame2 = raw2.array
+		#	print 'captured'
+			#cv2.imshow("suh", frame2)
+			#cv2.waitKey(0)
+		        
+			# grab frame
+			grey = cv2.cvtColor(frame2, cv2.COLOR_BGR2GRAY)
+			blurred = cv2.GaussianBlur(grey, (3,3), 0)
+			#thresh1 = cv2.threshold(blurred, 65, 255, cv2.THRESH_BINARY)[1]
+			#thresh1 = cv2.adaptiveThreshold(blurred, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY, 111,1)
+			#thresh1 = cv2.bitwise_not(thresh1, thresh1)
+	
+			thresh1 = cv2.Canny(blurred, 100, 190) #auto_canny(blurred)
+			
+			#cv2.imshow("thresh", thresh1)
+			#cv2.waitKey(0)
+	
+			# Process the contours: find the slots
+			contours = cv2.findContours(thresh1.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+			contours = contours[1] # the second tuple is correct for CV3
+	
+		#	print 'contour length:', len(contours)
+			if (len(contours) > 0):
+				for c in contours:
+					# find the centre
+					M = cv2.moments(c)
+					if M["m00"] != 0:
+						cX = int(M["m10"] / M["m00"])
+						cY = int(M["m01"] / M["m00"])
+					else: 
+						cX = 0
+						cY = 0
+					dots = np.vstack((dots,np.matrix([cX, cY])))	
+						
+					#dots = np.vstack((dots,np.dot(np.matrix([cX, cY]),rotationMatrix)))
+					cv2.circle(frame2, (cX, cY), 3, (0,255, 0), -1)
+			print dots
+		        cv2.imshow("Frame2", frame2)
+		    	cv2.waitKey()
+	
+			cv2.destroyAllWindows()
+	
+			
+			dots = dots.tolist()
+			#print [i*binSize for i in range(1280/binSize)]
+			indices = np.digitize([dot[0] for dot in dots], [i*binSize for i in range(1280/binSize)])
+			#print [dot[0] for dot in dots]
+			#print indices
+			lines = {}
+	
+			for i in range(1280/binSize):
+				lines[i] = []
+	
+			for i in range(len(dots)):
+				lines[indices[i]].append(dots[i][1])
+	
+			#print lines
+	
+			if firstTry:
+			
+				history = lines
+			else:
+				# compare
 		
-		#cv2.imshow("thresh", thresh1)
-		#cv2.waitKey(0)
-
-		# Process the contours: find the slots
-		contours = cv2.findContours(thresh1.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-		contours = contours[1] # the second tuple is correct for CV3
-
-	#	print 'contour length:', len(contours)
-		if (len(contours) > 0):
-			for c in contours:
-				# find the centre
-				M = cv2.moments(c)
-				if M["m00"] != 0:
-					cX = int(M["m10"] / M["m00"])
-					cY = int(M["m01"] / M["m00"])
-				else: 
-					cX = 0
-					cY = 0
-				dots = np.vstack((dots,np.matrix([cX, cY])))	
+				n = 1280/binSize
+	
+				while(True):
 					
-				#dots = np.vstack((dots,np.dot(np.matrix([cX, cY]),rotationMatrix)))
-				cv2.circle(frame2, (cX, cY), 3, (0,255, 0), -1)
-		print dots
-	        cv2.imshow("Frame2", frame2)
-	    	cv2.waitKey()
-
-		cv2.destroyAllWindows()
-
+					percentMatches = []
+					for i in range(n):
+	
+						percentMatches.append(compareLines(lines[i], history[i-n], tolerance))
+			
+					averageMatch = sum(percentMatches)/float(len(percentMatches))
+	
+					if (averageMatch >= threshold):
+						break
+	
+					n = n - 1
+	
+					if n == 0:
+						break
+	
+				for i in range(1280/binSize-n):
+					history[len(history)] = lines[i-(1280/binSize-n)]
+	
+			firstTry = False
+	
+			cv2.drawContours(frame, [c], -1, (0, 0, 255), 2)
+			cv2.circle(frame, (cX, cY), 3, (0,255, 0), -1)
 		
-		dots = dots.tolist()
-		#print [i*binSize for i in range(1280/binSize)]
-		indices = np.digitize([dot[0] for dot in dots], [i*binSize for i in range(1280/binSize)])
-		#print [dot[0] for dot in dots]
-		#print indices
-		lines = {}
-
-		for i in range(1280/binSize):
-			lines[i] = []
-
-		for i in range(len(dots)):
-			lines[indices[i]].append(dots[i][1])
-
-		#print lines
-
-		if firstTry:
+			cv2.imshow("Frame", frame)
+		    	key = cv2.waitKey(1) & 0xFF
 		
-			history = lines
-		else:
-			# compare
-	
-			n = 1280/binSize
-
-			while(True):
-				
-				percentMatches = []
-				for i in range(n):
-
-					percentMatches.append(compareLines(lines[i], history[i-n], tolerance))
+			if key == ord("q"):
+				go = 0
 		
-				averageMatch = sum(percentMatches)/float(len(percentMatches))
-
-				if (averageMatch >= threshold):
-					break
-
-				n = n - 1
-
-				if n == 0:
-					break
-
-			for i in range(1280/binSize-n):
-				history[len(history)] = lines[i-(1280/binSize-n)]
-
-		firstTry = False
-
-		cv2.drawContours(frame, [c], -1, (0, 0, 255), 2)
-		cv2.circle(frame, (cX, cY), 3, (0,255, 0), -1)
 	
-		cv2.imshow("Frame", frame)
-	    	key = cv2.waitKey(1) & 0xFF
+	except Exception as e:
+		print e
+		go = 0
+		num_runs = 0
 	
-		if key == ord("q"):
-			go = 0
+	cv2.destroyAllWindows()
 	
+	
+	steps = 0
+	for key in sorted(history.iterkeys()):
+		for each in history[key]:
+			pitch = min(127, int((each*scalingConstant/153)*127))
+			pitch = max(0, pitch)
+			inst.notes.append(pretty_midi.Note(velocity, 127 - pitch, steps*0.6944, (steps+1)*0.6944))
+		steps = steps + 1
+	
+	GPIO.output(GPIO_NUM, GPIO.HIGH)
+	time.sleep(0.1)
+	GPIO.output(GPIO_NUM, GPIO.LOW)
+	time.sleep(3)
+	print 'Commencing next shot'
+	num_runs = num_runs - 1
 
-except Exception as e:
-	print e
-	go = 0
-
-cv2.destroyAllWindows()
-
-
-pm = pretty_midi.PrettyMIDI(initial_tempo=80)
-inst = pretty_midi.Instrument(program=0, is_drum=False, name='piano')
-pm.instruments.append(inst)
-
-velocity = 127
-
-steps = 0
-for key in sorted(history.iterkeys()):
-	for each in history[key]:
-		pitch = min(127, int((each*scalingConstant/153)*127))
-		pitch = max(0, pitch)
-		inst.notes.append(pretty_midi.Note(velocity, 127 - pitch, steps*0.6944, (steps+1)*0.6944))
-	steps = steps + 1
 
 pm.write('out2.mid')
 
-GPIO.output(GPIO_NUM, GPIO.HIGH)
-time.sleep(0.1)
-GPIO.output(GPIO_NUM, GPIO.LOW)
+
 
 
 
