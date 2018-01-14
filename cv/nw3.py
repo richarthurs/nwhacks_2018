@@ -132,20 +132,25 @@ try:
 		camera.capture(raw2, format="bgr")
 		frame2 = raw2.array
 		print 'captured'
-		cv2.imshow("suh", frame2)
-		cv2.waitKey(0)
+		#cv2.imshow("suh", frame2)
+		#cv2.waitKey(0)
 	        
 		# grab frame
 		grey = cv2.cvtColor(frame2, cv2.COLOR_BGR2GRAY)
 		blurred = cv2.GaussianBlur(grey, (3,3), 0)
-		thresh1 = cv2.threshold(blurred, 65, 255, cv2.THRESH_BINARY)[1]
+		#thresh1 = cv2.threshold(blurred, 65, 255, cv2.THRESH_BINARY)[1]
 		#thresh1 = cv2.adaptiveThreshold(blurred, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY, 111,1)
-		thresh1 = cv2.bitwise_not(thresh1, thresh1)
+		#thresh1 = cv2.bitwise_not(thresh1, thresh1)
+
+		thresh1 = cv2.Canny(blurred, 100, 190) #auto_canny(blurred)
 		
+		cv2.imshow("thresh", thresh1)
+		cv2.waitKey(0)
+
 		# Process the contours: find the slots
 		contours = cv2.findContours(thresh1.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 		contours = contours[1] # the second tuple is correct for CV3
-	
+		print 'contour length:', len(contours)
 		if (len(contours) > 0):
 			for c in contours:
 				# find the centre
@@ -158,17 +163,19 @@ try:
 					cY = 0
 	
 				print [cX, cY]
-				dots = np.vstack((dots,np.multiply(rotationMatrix,np.matrix[cX, cY])))
+				dots = np.vstack((dots,np.multiply(rotationMatrix,np.matrix([cX, cY]))))
 				
 				# draw the contour and centre in the image
 				#cv2.drawContours(frame, [c], -1, (0, 0, 255), 2)
 				cv2.circle(frame2, (cX, cY), 3, (0,255, 0), -1)
 	
 	        cv2.imshow("final", frame2)
-	    	key = cv2.waitKey(1) & 0xFF
+		cv2.waitKey(0)
+
+		#key = cv2.waitKey(1) & 0xFF
 	
-		if key == ord("q"):
-			go = 0
+		#if key == ord("q"):
+		#	go = 0
 
 	
 except Exception as e:
