@@ -10,7 +10,7 @@ import cv2
 # of a green object, and draw a circle around it using the Pi's built in camera.
 # http://richarthurs.com/2017/08/20/getting-started-with-opencv-and-raspberry-pi/
 
-vs = piStream((1008, 400)).start()
+vs = piStream((1000, 620)).start()
 time.sleep(2.0)
 fps = FPS().start()
 

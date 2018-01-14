@@ -51,7 +51,7 @@ def compareLines(line1, line2, tolerance):
 	return 1.0 - failed/attempted
 
 camera = PiCamera()
-camera.resolution = (1280,720)
+camera.resolution = (1000,620)
 raw = PiRGBArray(camera)
 time.sleep(0.1)
 go = 1
@@ -153,7 +153,7 @@ else:
 
 #print 'ROTATION:', rotationMatrix
 cv2.destroyAllWindows()
-time.sleep(1)
+
 
 binSize = int(1.0/scalingConstant)
 
@@ -199,20 +199,19 @@ try:
 					cX = 0
 					cY = 0
 				dots = np.vstack((dots,np.matrix([cX, cY])))	
-				print(dots)	
+					
 				#dots = np.vstack((dots,np.dot(np.matrix([cX, cY]),rotationMatrix)))
 				cv2.circle(frame2, (cX, cY), 3, (0,255, 0), -1)
-
+		print dots
 	        cv2.imshow("Frame2", frame2)
 	    	cv2.waitKey()
 
-		print dots
+		
 		dots = dots.tolist()
-		print dots
-		print [i*binSize for i in range(1280/binSize)]
+		#print [i*binSize for i in range(1280/binSize)]
 		indices = np.digitize([dot[0] for dot in dots], [i*binSize for i in range(1280/binSize)])
-		print [dot[0] for dot in dots]
-		print indices
+		#print [dot[0] for dot in dots]
+		#print indices
 		lines = {}
 
 		for i in range(1280/binSize):
@@ -261,7 +260,9 @@ try:
 	
 		if key == ord("q"):
 			go = 0
-
+	
+	for row in lines:
+		print 'thing:', row
 
 except Exception as e:
 	print e

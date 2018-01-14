@@ -18,7 +18,7 @@ if __name__ == '__main__':
     inst = pretty_midi.Instrument(program=0, is_drum=False, name='my cello')
     pm.instruments.append(inst)
 
-    velocity = 100
+    velocity = 127
     pitch = 50
     for start, end in zip([0.2, 0.6, 1.0,2.2, 4.5], [1.1, 1.7, 2.3,2.5,5.0]):
         inst.notes.append(pretty_midi.Note(velocity, pitch, start, end))
