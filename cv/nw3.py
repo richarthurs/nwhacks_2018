@@ -154,7 +154,7 @@ print 'ROTATION:', rotationMatrix
 cv2.destroyAllWindows()
 time.sleep(1)
 
-binSize = 1.0/scalingConstant
+binSize = int(1.0/scalingConstant)
 
 history = {}
 firstTry = True
