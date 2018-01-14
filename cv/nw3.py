@@ -60,7 +60,7 @@ dots = np.zeros([1,2])
 redLower = (20, 20, 100)
 redUpper = (70, 70, 255)
 
-CALIBRATION_DISTANCE = 10.0
+CALIBRATION_DISTANCE = 59.240
 scalingConstant = 1.0
 rotationMatrix = []
 
