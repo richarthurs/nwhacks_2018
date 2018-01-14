@@ -10,7 +10,7 @@ import cv2
 # of a green object, and draw a circle around it using the Pi's built in camera.
 # http://richarthurs.com/2017/08/20/getting-started-with-opencv-and-raspberry-pi/
 
-vs = piStream().start()
+vs = piStream((1008, 400)).start()
 time.sleep(2.0)
 fps = FPS().start()
 
@@ -20,17 +20,17 @@ while go:
 	        # grab frame
 	        frame = vs.read()
 		grey = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-		blurred = cv2.GaussianBlur(grey, (9,9), 0)
-		#thresh1 = cv2.threshold(blurred, 30, 255, cv2.THRESH_BINARY)[1]
-		thresh1 = cv2.adaptiveThreshold(blurred, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY, 115,1)
+		blurred = cv2.GaussianBlur(grey, (1,1), 0)
+		thresh1 = cv2.threshold(blurred, 35, 255, cv2.THRESH_BINARY)[1]
+		#thresh1 = cv2.adaptiveThreshold(blurred, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY, 115,1)
 		thresh1 = cv2.bitwise_not(thresh1, thresh1)
+		
 		# Process the contours: find the slots
 		contours = cv2.findContours(thresh1.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 		contours = contours[1] # the second tuple is correct for CV3
-		#print contours
+
 		if (len(contours) > 0):
 			for c in contours:
-				print 'contours'
 				# find the centre
 				M = cv2.moments(c)
 				if M["m00"] != 0:
@@ -39,6 +39,8 @@ while go:
 				else: 
 					cX = 0
 					cY = 0
+
+				print [cX, cY]
 				
 				# draw the contour and centre in the image
 				#cv2.drawContours(frame, [c], -1, (0, 0, 255), 2)
@@ -47,7 +49,7 @@ while go:
 	        cv2.imshow("Frame", frame)
 	    	key = cv2.waitKey(1) & 0xFF
 	
-		fps.update()
+		#fps.update()
 	
 		if key == ord("q"):
 			go = 0
