@@ -203,7 +203,9 @@ try:
 
 		dots = dots.tolist()
 
-		indices = np.digitize([dot[0] for dot in dots], [i*binSize for i in range(1280/binSize)])
+		indices = []
+		for each in dots:
+			indices.append(np.floor(dot[0]/binSize))
 
 		lines = {}
 		for i in range(1280/binSize):
