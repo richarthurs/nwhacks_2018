@@ -84,7 +84,7 @@ if len(cnts) == 2:
 
 	((x1,y1), radius1) = cv2.minEnclosingCircle(dot1)
 	M1 = cv2.moments(dot1)
-	dot1_coords =.np.matrix([int(M1["m10"] / M1["m00"]), int(M1["m01"] / M1["m00"])])
+	dot1_coords =np.matrix([int(M1["m10"] / M1["m00"]), int(M1["m01"] / M1["m00"])])
 
 	((x2,y2), radius2) = cv2.minEnclosingCircle(dot2)
 	M2 = cv2.moments(dot2)
