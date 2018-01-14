@@ -60,7 +60,7 @@ dots = np.zeros([1,2])
 redLower = (20, 20, 100)
 redUpper = (70, 70, 255)
 
-CALIBRATION_DISTANCE = 10.0
+CALIBRATION_DISTANCE = 54.25
 scalingConstant = 1.0
 rotationMatrix = []
 
@@ -203,7 +203,7 @@ try:
 		dots = dots.tolist()
 		print [i*binSize for i in range(1280/binSize)]
 		indices = np.digitize([dot[0] for dot in dots], [i*binSize for i in range(1280/binSize)])
-
+		print [dot[0] for dot in dots]
 		print indices
 		lines = {}
 
@@ -211,7 +211,7 @@ try:
 			lines[i] = []
 
 		for i in range(len(dots)):
-			lines[indices[i]] = dots[i][1]
+			lines[indices[i]].append(dots[i][1])
 
 		print lines
 
