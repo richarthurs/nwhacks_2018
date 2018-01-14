@@ -19,7 +19,7 @@ if __name__ == '__main__':
     pm.instruments.append(inst)
 
     velocity = 127
-    pitch = 50
+    pitch = 127
     for start, end in zip([0.2, 0.6, 1.0,2.2, 4.5], [1.1, 1.7, 2.3,2.5,5.0]):
         inst.notes.append(pretty_midi.Note(velocity, pitch, start, end))
     print inst.notes

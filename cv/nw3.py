@@ -7,6 +7,7 @@ import time
 import cv2
 import numpy as np
 import sys
+import pretty_midi
 
 # This script incorporates OpenCV usage from pyimagesearch.com to find the centroid
 # of a green object, and draw a circle around it using the Pi's built in camera.
@@ -268,5 +269,22 @@ except Exception as e:
 
 cv2.destroyAllWindows()
 
-for key, value in lines.iteritems():
-	print value
+
+pm = pretty_midi.PrettyMIDI(initial_tempo=80)
+inst = pretty_midi.Instrument(program=0, is_drum=False, name='piano')
+pm.instruments.append(inst)
+
+velocity = 100
+
+int steps
+for key, in sorted(history.iterkeys()):
+	for each in history[key]:
+		pitch = int((each*scalingConstant/153)*127)
+		print pitch
+		inst.notes.append(pretty_midi.Note(velocity, pitch, steps*0.6944, (steps+1)*0.6944))
+	steps = steps + 1
+
+pm.write('out2.mid')
+
+
+
