@@ -6,6 +6,8 @@ import argparse
 import time
 import cv2
 import numpy as np
+from scipy.ndimage import rotate
+
 
 # This script incorporates OpenCV usage from pyimagesearch.com to find the centroid
 # of a green object, and draw a circle around it using the Pi's built in camera.
