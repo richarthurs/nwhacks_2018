@@ -8,6 +8,7 @@ import cv2
 import numpy as np
 import sys
 
+
 # This script incorporates OpenCV usage from pyimagesearch.com to find the centroid
 # of a green object, and draw a circle around it using the Pi's built in camera.
 # http://richarthurs.com/2017/08/20/getting-started-with-opencv-and-raspberry-pi/
