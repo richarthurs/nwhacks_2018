@@ -220,7 +220,7 @@ try:
 		for i in range(len(dots)):
 			lines[indices[i]].append(dots[i][1])
 
-		print lines
+		#print lines
 
 		if firstTry:
 		
@@ -261,8 +261,6 @@ try:
 		if key == ord("q"):
 			go = 0
 	
-	for row in lines:
-		print 'thing:', row
 
 except Exception as e:
 	print e
@@ -270,4 +268,5 @@ except Exception as e:
 
 cv2.destroyAllWindows()
 
-print history
+for key, value in lines.iteritems():
+	print value
