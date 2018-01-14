@@ -12,6 +12,7 @@ import numpy as np
 # http://richarthurs.com/2017/08/20/getting-started-with-opencv-and-raspberry-pi/
 
 camera = PiCamera()
+camera.resolution = (1280,720)
 raw = PiRGBArray(camera)
 time.sleep(0.1)
 go = 1
@@ -26,8 +27,8 @@ try:
 	        # grab frame
 		grey = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 		blurred = cv2.GaussianBlur(grey, (3,3), 0)
-		thresh1 = cv2.threshold(blurred, 60, 255, cv2.THRESH_BINARY)[1]
-		#thresh1 = cv2.adaptiveThreshold(blurred, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY, 115,1)
+		thresh1 = cv2.threshold(blurred, 65, 255, cv2.THRESH_BINARY)[1]
+		#thresh1 = cv2.adaptiveThreshold(blurred, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY, 111,1)
 		thresh1 = cv2.bitwise_not(thresh1, thresh1)
 		
 		# Process the contours: find the slots
