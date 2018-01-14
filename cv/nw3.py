@@ -185,7 +185,6 @@ try:
 		# Process the contours: find the slots
 		contours = cv2.findContours(thresh1.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 		contours = contours[1] # the second tuple is correct for CV3
-		dots = np.array([])
 
 		print 'contour length:', len(contours)
 		if (len(contours) > 0):
@@ -201,34 +200,32 @@ try:
 		
 				print rotationMatrix
 				print np.matrix([cX, cY])
-				print "HHHH"
-				dots = np.vstack((dots,np.multiply(np.matrix([cX, cY]),rotationMatrix)))
-				print "GGGG"
-		print "DSbbbG"
+				dots = np.vstack((dots,np.dot(np.matrix([cX, cY]),rotationMatrix)))
+
 		dots = dots.tolist()
-		print "DSGccc"
+
 		indices = np.digitize([dot[0] for dot in dots], [i*binSize for i in range(1280/binSize)])
-		print "DSG"
+
 		lines = {}
 		for i in range(1280/binSize):
 			lines[i] = []
 
 		for i in range(len(dots)):
 			lines[indices[i]] = dots[i][1]
-		print "DS1G"
+
 		if firstTry:
-			print "DSGexit"
+		
 			history = lines
 		else:
 			# compare
-			print "D2SG"
+	
 			n = 1280/binSize
 
 			while(True):
-				print "DS3G"
+				
 				percentMatches = []
-				for i in n:
-					print "DSG4"
+				for i in range(n):
+			
 					print percentMatches
 					percentMatches.append(compareLines(lines[i], history[i-n], tolerance))
 		
