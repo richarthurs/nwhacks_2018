@@ -62,12 +62,12 @@ if len(cnts) == 2:
 	if abs(unit[0]) >= abs(unit[1]):
 		if unit[0] < 0:
 			unit = unit * -1
-		angle = atan2(1 - unit[0], 0 - unit[1])
+		angle = np.arctan2(1.0 - unit[0], 0.0 - unit[1])
 	else:
 		if unit[1] < 0:
 			unit = unit * -1
-		angle = atan2(1 - unit[1], 0 - unit[0])
-	rotationMatrix = [[cos(angle), -sin(angle)],[sin(angle), cos(angle)]]
+		angle = np.arctan2(1.0 - unit[1], 0.0 - unit[0])
+	rotationMatrix = np.natrix[[np.cos(angle), -np.sin(angle)],[np.sin(angle), np.cos(angle)]]
 
 else:
 	print("Could not find both calibration dots")
@@ -102,7 +102,7 @@ try:
 					cY = 0
 	
 				print [cX, cY]
-				dots = np.vstack((dots,[cX, cY]))
+				dots = np.vstack((dots,np.multiply(rotationMatrix,np.matrix[cX, cY])))
 				
 				# draw the contour and centre in the image
 				#cv2.drawContours(frame, [c], -1, (0, 0, 255), 2)
