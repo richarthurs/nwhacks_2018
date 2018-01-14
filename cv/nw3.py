@@ -217,13 +217,12 @@ try:
 		else:
 			# compare
 
-			n = range(1280)/binSize
+			n = 1280/binSize
 
 			while(True):
-				print "sdgdsg"
+				
 				percentMatches = []
 				for i in n:
-					print "sdg1dsg"
 					percentMatches.append(compareLines(lines[i], history[i-n], tolerance))
 		
 				averageMatch = sum(percentMatches)/float(len(percentMatches))
@@ -236,8 +235,8 @@ try:
 				if n == 0:
 					break
 
-			for i in range(range(1280)/binSize-n):
-				history[len(history)] = lines[i-(range(1280)/binSize-n)]
+			for i in range(1280/binSize-n):
+				history[len(history)] = lines[i-(1280/binSize-n)]
 
 		firstTry = False
 
