@@ -201,7 +201,9 @@ try:
 		
 				print rotationMatrix
 				print np.matrix([cX, cY])
+				print "HHHH"
 				dots = np.vstack((dots,np.multiply(np.matrix([cX, cY]),rotationMatrix)))
+				print "GGGG"
 		print "DSbbbG"
 		dots = dots.tolist()
 		print "DSGccc"
