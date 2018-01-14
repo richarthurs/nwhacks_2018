@@ -48,9 +48,6 @@ def compareLines(line1, line2, tolerance):
 	if attempted == 0.0:
 		return 1.0
 
-	print(failed)
-	print(attempted)
-
 	return 1.0 - failed/attempted
 
 camera = PiCamera()
@@ -223,8 +220,10 @@ try:
 			n = range(1280)/binSize
 
 			while(True):
+				print "sdgdsg"
 				percentMatches = []
 				for i in n:
+					print "sdg1dsg"
 					percentMatches.append(compareLines(lines[i], history[i-n], tolerance))
 		
 				averageMatch = sum(percentMatches)/float(len(percentMatches))
