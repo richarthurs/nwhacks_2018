@@ -186,7 +186,7 @@ try:
 		contours = cv2.findContours(thresh1.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 		contours = contours[1] # the second tuple is correct for CV3
 		dots = np.array([])
-		
+
 		print 'contour length:', len(contours)
 		if (len(contours) > 0):
 			for c in contours:
@@ -217,22 +217,25 @@ try:
 		else:
 			# compare
 
-			n = 0
+			n = range(1280.0)/binSize
 
 			while(True):
 				percentMatches = []
-				for i in range(1280.0/binSize):
-					percentMatches.append(compareLines(lines[-(i+n)], history[-(i+n)], tolerance))
+				for i in n:
+					percentMatches.append(compareLines(lines[i], history[i-n], tolerance))
 				
 				averageMatch = sum(percentMatches)/float(len(percentMatches))
 
 				if (averageMatch >= threshold):
 					break
 
-				n = n + 1
+				n = n - 1
 
-			for i in range(n):
-				history[len(history)] = lines[(n - i - 1)]
+				if n == 0:
+					break
+
+			for i in range(range(1280.0)/binSize-n):
+				history[len(history)] = lines[i-(range(1280.0)/binSize-n)]
 
 		firstTry = False
 
