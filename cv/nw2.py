@@ -5,6 +5,7 @@ from picamera import PiCamera
 import argparse
 import time
 import cv2
+import numpy as np
 
 # This script incorporates OpenCV usage from pyimagesearch.com to find the centroid
 # of a green object, and draw a circle around it using the Pi's built in camera.
@@ -14,6 +15,7 @@ camera = PiCamera()
 raw = PiRGBArray(camera)
 time.sleep(0.1)
 go = 1
+dots = np.zeros([1,2])
 
 try:
 	while(go):
@@ -23,8 +25,8 @@ try:
 	
 	        # grab frame
 		grey = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-		blurred = cv2.GaussianBlur(grey, (1,1), 0)
-		thresh1 = cv2.threshold(blurred, 35, 255, cv2.THRESH_BINARY)[1]
+		blurred = cv2.GaussianBlur(grey, (3,3), 0)
+		thresh1 = cv2.threshold(blurred, 40, 255, cv2.THRESH_BINARY)[1]
 		#thresh1 = cv2.adaptiveThreshold(blurred, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY, 115,1)
 		thresh1 = cv2.bitwise_not(thresh1, thresh1)
 		
@@ -44,6 +46,7 @@ try:
 					cY = 0
 	
 				print [cX, cY]
+				dots = np.vstack((dots,[cX, cY]))
 				
 				# draw the contour and centre in the image
 				#cv2.drawContours(frame, [c], -1, (0, 0, 255), 2)
@@ -60,8 +63,8 @@ except Exception as e:
 	print e
 	go = 0
 
-
-
+print "dots: --------------"
+print dots
 cv2.destroyAllWindows()
 
 
