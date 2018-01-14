@@ -23,6 +23,33 @@ def auto_canny(image, sigma=0.33):
 	# return the edged image
 	return edged
 
+def compareLines(line1, line2, tolerance):
+
+	attempted = 0.0
+	failed = 0.0
+
+	if len(line1) >= len(line2):
+		for a in line1:
+			attempted += 1.0
+			failed += 1.0
+			for b in line2:
+				if (a + tolerance >= b - tolerance || a - tolerance <= b + tolerance):
+					failed -= 1.0
+					break
+	else:
+		for a in line2:
+			attempted += 1.0
+			failed += 1.0
+			for b in line1:
+				if (a + tolerance >= b - tolerance || a - tolerance <= b + tolerance):
+					failed -= 1.0
+					break
+
+	if attempted == 0.0:
+		return 1.0
+
+	return 1.0 - failed/attempted
+
 camera = PiCamera()
 camera.resolution = (1280,720)
 raw = PiRGBArray(camera)
@@ -127,6 +154,13 @@ print 'ROTATION:', rotationMatrix
 cv2.destroyAllWindows()
 time.sleep(1)
 
+binSize = 1.0/scalingConstant
+
+history = {}
+firstTry = True
+threshold = 0.7
+tolerance = binSize
+
 try:
 	while(go):
 		raw2 = PiRGBArray(camera)
@@ -164,28 +198,45 @@ try:
 					cY = 0
 	
 				#print [cX, cY]
-				dots = np.vstack((dots,np.multiply(np.matrix([cX, cY]),rotationMatrix)))
+				dots = np.vstack((dots,np.multiply(np.matrix([cX, cY]),rotationMatrix))).tolist()
 				
-				# draw the contour and centre in the image
-				#cv2.drawContours(frame, [c], -1, (0, 0, 255), 2)
-				cv2.circle(frame2, (int(dots[-1,0]),int(dots[-1,1])), 3, (0,255, 0), -1)
-	
-	        cv2.imshow("final", frame2)
-		#cv2.waitKey(0)
+				indices = numpy.digitize([dot[0] for dot in dots], [i*binSize for i in range(1280.0/binSize)])
 
-		key = cv2.waitKey(1) & 0xFF
-	
-		if key == ord("q"):
-			go = 0
+				lines = {}
+				for i in range(1280.0/binSize):
+					lines[i] = []
 
-	
+				for i in range(len(dots)):
+					lines[indices[i]] = dots[i][1]
+				
+				if firstTry:
+					history = lines
+				else:
+					# compare
+
+					n = 0
+
+					while(True):
+						percentMatches = []
+						for i in range(1280.0/binSize):
+							percentMatches.append(compareLines(lines[-(i+n)], history[-(i+n)], tolerance))
+						
+						averageMatch = sum(percentMatches)/float(len(percentMatches))
+
+						if (averageMatch >= threshold):
+							break
+
+						n = n + 1
+
+					for i in range(n):
+						history[len(history)] = lines[(n - i - 1)]
+
+				firstTry = False
+
 except Exception as e:
 	print e
 	go = 0
 
-print "dots: --------------"
-#dots = dots[~np.all(dots == 0, axis=1)] #https://stackoverflow.com/questions/11188364/remove-zero-lines-2-d-numpy-array
-print dots
 cv2.destroyAllWindows()
 
 
