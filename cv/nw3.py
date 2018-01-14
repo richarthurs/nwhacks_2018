@@ -103,18 +103,19 @@ if len(cnts) == 2:
 	
 	scalingConstant = CALIBRATION_DISTANCE/np.hypot(dot2_coords[0] - dot1_coords[0], dot2_coords[1] - dot1_coords[1])
 
-	disp = (dot2_coords[0]-dot1_coords[0],dot2_coords[1] - dot2_coords[1])
+	disp = (dot2_coords[0]-dot1_coords[0],dot2_coords[1] - dot1_coords[1])
 	unit = (disp[0]/np.hypot(disp[0], disp[1]),disp[1]/np.hypot(disp[0], disp[1]))
 
 	angle = 0
+
 	if abs(unit[0]) >= abs(unit[1]):
 		if unit[0] < 0:
 			unit =(unit[0] * -1, unit[1]* -1)
-		angle = np.arctan2(1.0 - unit[0], 0.0 - unit[1])
+		angle = -np.arctan2(1.0 - unit[0], 0.0 - unit[1])
 	else:
 		if unit[1] < 0:
 			unit = (unit[0] * -1, unit[1] * -1)
-		angle = np.arctan2(1.0 - unit[1], 0.0 - unit[0])
+		angle = -np.arctan2(1.0 - unit[1], 0.0 - unit[0])
 	rotationMatrix = np.array([[np.cos(angle), -np.sin(angle)],[np.sin(angle), np.cos(angle)]])
 
 else:
@@ -122,12 +123,12 @@ else:
 	cal = 0
 	sys.exit()
 
+print 'ROTATION:', rotationMatrix
 cv2.destroyAllWindows()
 time.sleep(1)
 
 try:
 	while(go):
-		print 'WORKING'
 		raw2 = PiRGBArray(camera)
 		camera.capture(raw2, format="bgr")
 		frame2 = raw2.array
@@ -144,8 +145,8 @@ try:
 
 		thresh1 = cv2.Canny(blurred, 100, 190) #auto_canny(blurred)
 		
-		cv2.imshow("thresh", thresh1)
-		cv2.waitKey(0)
+		#cv2.imshow("thresh", thresh1)
+		#cv2.waitKey(0)
 
 		# Process the contours: find the slots
 		contours = cv2.findContours(thresh1.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -162,20 +163,20 @@ try:
 					cX = 0
 					cY = 0
 	
-				print [cX, cY]
-				dots = np.vstack((dots,np.multiply(rotationMatrix,np.matrix([cX, cY]))))
+				#print [cX, cY]
+				dots = np.vstack((dots,np.multiply(np.matrix([cX, cY]),rotationMatrix)))
 				
 				# draw the contour and centre in the image
 				#cv2.drawContours(frame, [c], -1, (0, 0, 255), 2)
-				cv2.circle(frame2, (cX, cY), 3, (0,255, 0), -1)
+				cv2.circle(frame2, (int(dots[-1,0]),int(dots[-1,1])), 3, (0,255, 0), -1)
 	
 	        cv2.imshow("final", frame2)
-		cv2.waitKey(0)
+		#cv2.waitKey(0)
 
-		#key = cv2.waitKey(1) & 0xFF
+		key = cv2.waitKey(1) & 0xFF
 	
-		#if key == ord("q"):
-		#	go = 0
+		if key == ord("q"):
+			go = 0
 
 	
 except Exception as e:
@@ -183,7 +184,7 @@ except Exception as e:
 	go = 0
 
 print "dots: --------------"
-dots = dots[~np.all(dots == 0, axis=1)] #https://stackoverflow.com/questions/11188364/remove-zero-lines-2-d-numpy-array
+#dots = dots[~np.all(dots == 0, axis=1)] #https://stackoverflow.com/questions/11188364/remove-zero-lines-2-d-numpy-array
 print dots
 cv2.destroyAllWindows()
 
