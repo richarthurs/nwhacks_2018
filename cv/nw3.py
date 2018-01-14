@@ -223,7 +223,7 @@ try:
 				percentMatches = []
 				for i in n:
 					percentMatches.append(compareLines(lines[i], history[i-n], tolerance))
-				print(percentMatches)
+				print percentMatches
 				averageMatch = sum(percentMatches)/float(len(percentMatches))
 
 				if (averageMatch >= threshold):
