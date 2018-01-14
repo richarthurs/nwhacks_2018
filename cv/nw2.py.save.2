@@ -42,18 +42,7 @@ cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL,
 	cv2.CHAIN_APPROX_SIMPLE)[-2]
 centroid = None
 
-# only proceed if thr radius meets a min size
-if radius > 10:
-	# draw circle and centroid, update tracked pts
-	cv2.circle(frame, (int(x), int(y)), int(radius),
-		(0, 255, 255), 2)
-	cv2.circle(frame, centroid, 5, (0, 0, 255), -1)
-print centroid 
-
-cv2.imshow("Frame", frame)
-
 if len(cnts) == 2:
-
 
 	
 	dot1 = cnts[0];
@@ -82,6 +71,7 @@ if len(cnts) == 2:
 			unit = unit * -1
 		angle = np.arctan2(1.0 - unit[1], 0.0 - unit[0])
 	rotationMatrix = np.natrix[[np.cos(angle), -np.sin(angle)],[np.sin(angle), np.cos(angle)]]
+
 
 else:
 	print("Could not find both calibration dots")

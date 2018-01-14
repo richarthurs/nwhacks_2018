@@ -19,21 +19,21 @@ time.sleep(0.1)
 go = 1
 dots = np.zeros([1,2])
 
-redLower = (29, 30, 180)
-redUpper = (29, 30, 255)
+redLower = (29, 86, 6)
+redUpper = (64, 255, 255)
 
 CALIBRATION_DISTANCE = 10.0
 scalingConstant = 1.0
 rotationMatrix = []
 
+
+
 # calibrate
-#frame = vs.read()
-camera.capture(raw, format="bgr")
-frame = raw.array
+frame = vs.read()
 hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
 # make a mask for green, remove small blobs with dialation and erosion
-mask = cv2.inRange(hsv, redLower, redUpper)
+mask = cv2.inRange(hsv, greenLower, greenUpper)
 mask = cv2.erode(mask, None, iterations = 2)
 mask = cv2.dilate(mask, None, iterations=2)
 
@@ -42,19 +42,7 @@ cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL,
 	cv2.CHAIN_APPROX_SIMPLE)[-2]
 centroid = None
 
-# only proceed if thr radius meets a min size
-if radius > 10:
-	# draw circle and centroid, update tracked pts
-	cv2.circle(frame, (int(x), int(y)), int(radius),
-		(0, 255, 255), 2)
-	cv2.circle(frame, centroid, 5, (0, 0, 255), -1)
-print centroid 
-
-cv2.imshow("Frame", frame)
-
 if len(cnts) == 2:
-
-
 	
 	dot1 = cnts[0];
 	dot2 = cnts[1];
