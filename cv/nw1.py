@@ -25,28 +25,30 @@ while go:
 		thresh1 = cv2.adaptiveThreshold(blurred, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY, 115,1)
 		
 		# Process the contours: find the slots
-		contours = cv2.findContours(thresh1.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-		contours = contours[1] # the second tuple is correct for CV3
-
+		contours = cv2.findContours(thresh1.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
+		# contours = contours[1] # the second tuple is correct for CV3
+		#print contours
 		for c in contours:
+			print 'contours'
 			# find the centre
 			M = cv2.moments(c)
-			cX = int(M["m10"] / M["m00"])
-			cY = int(M["m01"] / M["m00"])
+			if M["m00"] is not 0:
+				cX = int(M["m10"] / M["m00"])
+				cY = int(M["m01"] / M["m00"])
 			
-			# draw the contour and centre in the image
-			#cv2.drawContours(image, [c], -1, (0, 0, 255), 2)
-			cv2.circle(thresh1, (cX, cY), 7, (0,0,255), -1)
+				# draw the contour and centre in the image
+				#cv2.drawContours(image, [c], -1, (0, 0, 255), 2)
+				cv2.circle(frame, (cX, cY), 7, (0,255, 0), -1)
 
-	        cv2.imshow("Frame", thresh1)
-	        key = cv2.waitKey(1) & 0xFF
+	        cv2.imshow("Frame", frame)
+	    	key = cv2.waitKey(1) & 0xFF
 	
-	        fps.update()
+		fps.update()
 	
-	        if key == ord("q"):
+		if key == ord("q"):
 			go = 0
-	                break
-	
+	               	break
+		
 	
 	#	#hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 	
