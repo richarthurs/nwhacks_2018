@@ -33,7 +33,7 @@ def compareLines(line1, line2, tolerance):
 			attempted += 1.0
 			failed += 1.0
 			for b in line2:
-				if (a + tolerance >= b - tolerance || a - tolerance <= b + tolerance):
+				if (a + tolerance >= b - tolerance or a - tolerance <= b + tolerance):
 					failed -= 1.0
 					break
 	else:
@@ -41,7 +41,7 @@ def compareLines(line1, line2, tolerance):
 			attempted += 1.0
 			failed += 1.0
 			for b in line1:
-				if (a + tolerance >= b - tolerance || a - tolerance <= b + tolerance):
+				if (a + tolerance >= b - tolerance or a - tolerance <= b + tolerance):
 					failed -= 1.0
 					break
 
