@@ -48,6 +48,9 @@ def compareLines(line1, line2, tolerance):
 	if attempted == 0.0:
 		return 1.0
 
+	print(failed)
+	print(attempted)
+
 	return 1.0 - failed/attempted
 
 camera = PiCamera()
@@ -223,7 +226,7 @@ try:
 				percentMatches = []
 				for i in n:
 					percentMatches.append(compareLines(lines[i], history[i-n], tolerance))
-				print percentMatches
+		
 				averageMatch = sum(percentMatches)/float(len(percentMatches))
 
 				if (averageMatch >= threshold):
