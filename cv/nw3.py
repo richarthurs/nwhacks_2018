@@ -111,11 +111,11 @@ if len(cnts) == 2:
 	if abs(unit[0]) >= abs(unit[1]):
 		if unit[0] < 0:
 			unit =(unit[0] * -1, unit[1]* -1)
-		angle = -np.arctan2(1.0 - unit[0], 0.0 - unit[1])
+		angle = np.arctan2(1.0 - unit[0], 0.0 - unit[1])
 	else:
 		if unit[1] < 0:
 			unit = (unit[0] * -1, unit[1] * -1)
-		angle = -np.arctan2(1.0 - unit[1], 0.0 - unit[0])
+		angle = np.arctan2(1.0 - unit[1], 0.0 - unit[0])
 	rotationMatrix = np.array([[np.cos(angle), -np.sin(angle)],[np.sin(angle), np.cos(angle)]])
 
 else:
@@ -163,8 +163,9 @@ try:
 					cX = 0
 					cY = 0
 	
-				#print [cX, cY]
-				dots = np.vstack((dots,np.multiply(np.matrix([cX, cY]),rotationMatrix)))
+				print 'OG:',[cX, cY]
+				print 'Rotated:', int(dots[-1,0]),int(dots[-1,1])
+				dots = np.vstack((dots,np.dot(np.matrix([cX, cY]),rotationMatrix)))
 				
 				# draw the contour and centre in the image
 				#cv2.drawContours(frame, [c], -1, (0, 0, 255), 2)
