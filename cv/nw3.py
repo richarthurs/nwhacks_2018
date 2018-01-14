@@ -138,11 +138,11 @@ if len(cnts) == 2:
 	if abs(unit[0]) >= abs(unit[1]):
 		if unit[0] < 0:
 			unit =(unit[0] * -1, unit[1]* -1)
-		angle = -np.arctan2(1.0 - unit[0], 0.0 - unit[1])
+		angle = np.arctan2(1.0 - unit[0], 0.0 - unit[1])
 	else:
 		if unit[1] < 0:
 			unit = (unit[0] * -1, unit[1] * -1)
-		angle = -np.arctan2(1.0 - unit[1], 0.0 - unit[0])
+		angle = np.arctan2(1.0 - unit[1], 0.0 - unit[0])
 	rotationMatrix = np.array([[np.cos(angle), -np.sin(angle)],[np.sin(angle), np.cos(angle)]])
 
 else:
@@ -197,9 +197,8 @@ try:
 					cX = 0
 					cY = 0
 	
-				#print [cX, cY]
 				dots = np.vstack((dots,np.multiply(np.matrix([cX, cY]),rotationMatrix))).tolist()
-				
+
 				indices = numpy.digitize([dot[0] for dot in dots], [i*binSize for i in range(1280.0/binSize)])
 
 				lines = {}
