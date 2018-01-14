@@ -200,9 +200,9 @@ try:
 					cY = 0
 	
 				dots = np.vstack((dots,np.multiply(np.matrix([cX, cY]),rotationMatrix)))
-
+		print "DSbbbG"
 		dots = dots.tolist()
-
+		print "DSGccc"
 		indices = np.digitize([dot[0] for dot in dots], [i*binSize for i in range(1280/binSize)])
 		print "DSG"
 		lines = {}
