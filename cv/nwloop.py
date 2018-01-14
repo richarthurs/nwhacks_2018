@@ -59,7 +59,7 @@ pm = pretty_midi.PrettyMIDI(initial_tempo=80)
 inst = pretty_midi.Instrument(program=0, is_drum=False, name='piano')
 pm.instruments.append(inst)
 velocity = 127
-steps = 0
+
 
 camera = PiCamera()
 camera.resolution = (1000,620)
@@ -176,6 +176,7 @@ threshold = 0.7
 tolerance = binSize
 
 num_runs = 3
+steps = 0
 
 while(num_runs > 0):
 	try:
@@ -242,7 +243,7 @@ while(num_runs > 0):
 	
 			if firstTry:
 			
-				history = lines
+				history = dict(lines)
 			else:
 				# compare
 		
@@ -281,19 +282,18 @@ while(num_runs > 0):
 		
 	
 	except Exception as e:
-		print e
-		go = 0
-#		num_runs = 0
+		pass
 	
 	#cv2.destroyAllWindows()
 	
-
+	
 	for key in sorted(history.iterkeys()):
 		for each in history[key]:
 			pitch = min(127, int((each*scalingConstant/153)*127))
 			pitch = max(0, pitch)
-			print pitch
-			inst.notes.append(pretty_midi.Note(velocity, 127 - pitch, steps*0.6944, (steps+1)*0.6944))
+			#print pitch
+			print steps
+			inst.notes.append(pretty_midi.Note(velocity, pitch, steps*0.6944, (steps+1)*0.6944))
 		steps = steps + 1
 	
 	GPIO.output(GPIO_NUM, GPIO.HIGH)
@@ -305,7 +305,7 @@ while(num_runs > 0):
 	print num_runs
 
 
-pm.write('out2.mid')
+pm.write('out23.mid')
 
 
 
