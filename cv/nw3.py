@@ -11,6 +11,17 @@ import sys
 # This script incorporates OpenCV usage from pyimagesearch.com to find the centroid
 # of a green object, and draw a circle around it using the Pi's built in camera.
 # http://richarthurs.com/2017/08/20/getting-started-with-opencv-and-raspberry-pi/
+def auto_canny(image, sigma=0.33):
+	# compute the median of the single channel pixel intensities
+	v = np.median(image)
+ 
+	# apply automatic Canny edge detection using the computed median
+	lower = int(max(0, (1.0 - sigma) * v))
+	upper = int(min(255, (1.0 + sigma) * v))
+	edged = cv2.Canny(image, lower, upper)
+ 
+	# return the edged image
+	return edged
 
 camera = PiCamera()
 camera.resolution = (1280,720)
@@ -35,9 +46,14 @@ frame = raw.array
 hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
 # make a mask for green, remove small blobs with dialation and erosion
-mask = cv2.inRange(hsv, redLower, redUpper)
-mask = cv2.erode(mask, None, iterations = 2)
-mask = cv2.dilate(mask, None, iterations=2)
+#mask = cv2.inRange(hsv, redLower, redUpper)
+#mask = cv2.erode(mask, None, iterations = 2)
+#mask = cv2.dilate(mask, None, iterations=2)
+
+# Canny detection
+gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+blurred = cv2.GaussianBlur(gray, (3, 3), 0)
+mask = cv2.Canny(blurred, 225, 250) #auto_canny(blurred)
 
 # find contours and init the center of the ball
 cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL,
