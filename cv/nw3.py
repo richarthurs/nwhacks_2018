@@ -198,7 +198,9 @@ try:
 				else: 
 					cX = 0
 					cY = 0
-	
+		
+				print rotationMatrix
+				print np.matrix([cX, cY])
 				dots = np.vstack((dots,np.multiply(np.matrix([cX, cY]),rotationMatrix)))
 		print "DSbbbG"
 		dots = dots.tolist()
