@@ -61,7 +61,6 @@ cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL,
 centroid = None
 
 for c in cnts:
-
     ((x,y), radius) = cv2.minEnclosingCircle(c)
     M = cv2.moments(c)
     centroid = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
@@ -71,7 +70,7 @@ for c in cnts:
         (0, 255, 255), 2)
     cv2.circle(frame, centroid, 5, (0, 0, 255), -1)
 while(cal):
-	cv2.imshow("Frame", mask)
+	cv2.imshow("Frame", frame)
 
 	key = cv2.waitKey(1) & 0xFF
 
@@ -79,9 +78,7 @@ while(cal):
 		cv2.destroyAllWindows()
 		cal = 0
 
-
-if len(cnts) == 2:
-	
+if len(cnts) == 2:	
 	dot1 = cnts[0];
 	dot2 = cnts[1];
 
@@ -93,10 +90,10 @@ if len(cnts) == 2:
 	M2 = cv2.moments(dot2)
 	dot2_coords = (int(M2["m10"] / M2["m00"]), int(M2["m01"] / M2["m00"]))
 	
-	scalingConstant = CALIBRATION_DISTANCE/hypot(dot2_coords[0] - dot1_coords[0], dot2_coords[1] - dot1_coords[1])
+	scalingConstant = CALIBRATION_DISTANCE/np.hypot(dot2_coords[0] - dot1_coords[0], dot2_coords[1] - dot1_coords[1])
 
 	disp = dot2_coords - dot1_coords
-	unit = disp/hypot(disp[0], disp[1])
+	unit = disp/np.hypot(disp[0], disp[1])
 
 	angle = 0
 	if abs(unit[0]) >= abs(unit[1]):
@@ -107,7 +104,7 @@ if len(cnts) == 2:
 		if unit[1] < 0:
 			unit = unit * -1
 		angle = np.arctan2(1.0 - unit[1], 0.0 - unit[0])
-	rotationMatrix = np.natrix[[np.cos(angle), -np.sin(angle)],[np.sin(angle), np.cos(angle)]]
+	rotationMatrix = np.matrix[[np.cos(angle), -np.sin(angle)],[np.sin(angle), np.cos(angle)]]
 
 else:
 	print("Could not find both calibration dots")
