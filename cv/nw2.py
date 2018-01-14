@@ -6,6 +6,7 @@ import argparse
 import time
 import cv2
 import numpy as np
+import sys
 
 # This script incorporates OpenCV usage from pyimagesearch.com to find the centroid
 # of a green object, and draw a circle around it using the Pi's built in camera.
@@ -17,6 +18,60 @@ raw = PiRGBArray(camera)
 time.sleep(0.1)
 go = 1
 dots = np.zeros([1,2])
+
+redLower = (29, 86, 6)
+redUpper = (64, 255, 255)
+
+CALIBRATION_DISTANCE = 10.0
+scalingConstant = 1.0
+rotationMatrix = []
+
+# calibrate
+frame = vs.read()
+hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+
+# make a mask for green, remove small blobs with dialation and erosion
+mask = cv2.inRange(hsv, greenLower, greenUpper)
+mask = cv2.erode(mask, None, iterations = 2)
+mask = cv2.dilate(mask, None, iterations=2)
+
+# find contours and init the center of the ball
+cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL,
+	cv2.CHAIN_APPROX_SIMPLE)[-2]
+centroid = None
+
+if len(cnts) == 2:
+	
+	dot1 = cnts[0];
+	dot2 = cnts[1];
+
+	((x1,y1), radius1) = cv2.minEnclosingCircle(dot1)
+	M1 = cv2.moments(dot1)
+	dot1_coords = (int(M1["m10"] / M1["m00"]), int(M1["m01"] / M1["m00"]))
+
+	((x2,y2), radius2) = cv2.minEnclosingCircle(dot2)
+	M2 = cv2.moments(dot2)
+	dot2_coords = (int(M2["m10"] / M2["m00"]), int(M2["m01"] / M2["m00"]))
+	
+	scalingConstant = CALIBRATION_DISTANCE/hypot(dot2_coords[0] - dot1_coords[0], dot2_coords[1] - dot1_coords[1])
+
+	disp = dot2_coords - dot1_coords
+	unit = disp/hypot(disp[0], disp[1])
+
+	angle = 0
+	if abs(unit[0]) >= abs(unit[1]):
+		if unit[0] < 0:
+			unit = unit * -1
+		angle = atan2(1 - unit[0], 0 - unit[1])
+	else:
+		if unit[1] < 0:
+			unit = unit * -1
+		angle = atan2(1 - unit[1], 0 - unit[0])
+	rotationMatrix = [[cos(angle), -sin(angle)],[sin(angle), cos(angle)]]
+
+else:
+	print("Could not find both calibration dots")
+	sys.exit()
 
 try:
 	while(go):
