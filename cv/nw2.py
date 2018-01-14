@@ -19,7 +19,7 @@ time.sleep(0.1)
 go = 1
 dots = np.zeros([1,2])
 
-redLower = (29, 30, 180)
+redLower = (29, 30, 160)
 redUpper = (29, 30, 255)
 
 CALIBRATION_DISTANCE = 10.0
@@ -27,6 +27,8 @@ scalingConstant = 1.0
 rotationMatrix = []
 
 # calibrate
+cal = 1
+
 #frame = vs.read()
 camera.capture(raw, format="bgr")
 frame = raw.array
@@ -52,12 +54,17 @@ for c in cnts:
     cv2.circle(frame, (int(x), int(y)), int(radius),
         (0, 255, 255), 2)
     cv2.circle(frame, centroid, 5, (0, 0, 255), -1)
+while(cal):
+	cv2.imshow("Frame", frame)
 
-cv2.imshow("Frame", frame)
+	key = cv2.waitKey(1) & 0xFF
+
+	if key == ord("q"):
+		cv2.destroyAllWindows()
+		cal = 0
+
 
 if len(cnts) == 2:
-
-
 	
 	dot1 = cnts[0];
 	dot2 = cnts[1];
@@ -88,6 +95,7 @@ if len(cnts) == 2:
 
 else:
 	print("Could not find both calibration dots")
+	cal = 0
 	sys.exit()
 
 try:
