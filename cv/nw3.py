@@ -53,7 +53,7 @@ hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 # Canny detection
 gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 blurred = cv2.GaussianBlur(gray, (3, 3), 0)
-mask = cv2.Canny(blurred, 225, 250) #auto_canny(blurred)
+mask = cv2.Canny(blurred, 100, 190) #auto_canny(blurred)
 
 # find contours and init the center of the ball
 cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL,
@@ -73,7 +73,7 @@ for c in cnts:
         (0, 255, 255), 2)
     cv2.circle(frame, centroid, 5, (0, 0, 255), -1)
 while(cal):
-	cv2.imshow("Frame", frame)
+	cv2.imshow("Frame", mask)
 
 	key = cv2.waitKey(1) & 0xFF
 
