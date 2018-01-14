@@ -59,6 +59,7 @@ pm = pretty_midi.PrettyMIDI(initial_tempo=80)
 inst = pretty_midi.Instrument(program=0, is_drum=False, name='piano')
 pm.instruments.append(inst)
 velocity = 127
+steps = 0
 
 camera = PiCamera()
 camera.resolution = (1000,620)
@@ -77,8 +78,8 @@ rotationMatrix = []
 
 # calibrate
 cal = 1
+calibration = 1
 
-#frame = vs.read()
 camera.capture(raw, format="bgr")
 frame = raw.array
 hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
@@ -161,6 +162,8 @@ else:
 	cal = 0
 	sys.exit()
 
+		
+
 #print 'ROTATION:', rotationMatrix
 cv2.destroyAllWindows()
 
@@ -174,7 +177,7 @@ tolerance = binSize
 
 num_runs = 3
 
-while(num_runs > 1):
+while(num_runs > 0):
 	try:
 		while(go):
 			raw2 = PiRGBArray(camera)
@@ -215,7 +218,7 @@ while(num_runs > 1):
 						
 					#dots = np.vstack((dots,np.dot(np.matrix([cX, cY]),rotationMatrix)))
 					cv2.circle(frame2, (cX, cY), 3, (0,255, 0), -1)
-			print dots
+			#print dots
 		        cv2.imshow("Frame2", frame2)
 		    	cv2.waitKey()
 	
@@ -280,16 +283,16 @@ while(num_runs > 1):
 	except Exception as e:
 		print e
 		go = 0
-		num_runs = 0
+#		num_runs = 0
 	
-	cv2.destroyAllWindows()
+	#cv2.destroyAllWindows()
 	
-	
-	steps = 0
+
 	for key in sorted(history.iterkeys()):
 		for each in history[key]:
 			pitch = min(127, int((each*scalingConstant/153)*127))
 			pitch = max(0, pitch)
+			print pitch
 			inst.notes.append(pretty_midi.Note(velocity, 127 - pitch, steps*0.6944, (steps+1)*0.6944))
 		steps = steps + 1
 	
@@ -299,6 +302,7 @@ while(num_runs > 1):
 	time.sleep(3)
 	print 'Commencing next shot'
 	num_runs = num_runs - 1
+	print num_runs
 
 
 pm.write('out2.mid')
