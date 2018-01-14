@@ -201,16 +201,20 @@ try:
 				dots = np.vstack((dots,np.dot(np.matrix([cX, cY]),rotationMatrix)))
 
 		dots = dots.tolist()
-
+		print dots
 		indices = np.digitize([dot[0] for dot in dots], [i*binSize for i in range(1280/binSize)])
 
+		print indices
 		lines = {}
+
 		for i in range(1280/binSize):
 			lines[i] = []
 
 		for i in range(len(dots)):
 			lines[indices[i]] = dots[i][1]
 
+		print lines
+		
 		if firstTry:
 		
 			history = lines
