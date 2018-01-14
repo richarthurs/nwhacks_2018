@@ -11,9 +11,6 @@ import pretty_midi
 import RPi.GPIO as GPIO
 
 
-# This script incorporates OpenCV usage from pyimagesearch.com to find the centroid
-# of a green object, and draw a circle around it using the Pi's built in camera.
-# http://richarthurs.com/2017/08/20/getting-started-with-opencv-and-raspberry-pi/
 def auto_canny(image, sigma=0.33):
 	# compute the median of the single channel pixel intensities
 	v = np.median(image)
@@ -53,9 +50,10 @@ def compareLines(line1, line2, tolerance):
 
 	return 1.0 - failed/attempted
 
+GPIO_NUM = 18
 GPIO.setmode(GPIO.BOARD)
-GPIO.setup(23, GPIO.OUT)
-GPIO.output(23, GPIO.LOW)
+GPIO.setup(GPIO_NUM, GPIO.OUT)
+GPIO.output(GPIO_NUM, GPIO.LOW)
 
 camera = PiCamera()
 camera.resolution = (1000,620)
@@ -213,6 +211,8 @@ try:
 	        cv2.imshow("Frame2", frame2)
 	    	cv2.waitKey()
 
+		cv2.destroyAllWindows()
+
 		
 		dots = dots.tolist()
 		#print [i*binSize for i in range(1280/binSize)]
@@ -287,15 +287,14 @@ for key in sorted(history.iterkeys()):
 	for each in history[key]:
 		pitch = min(127, int((each*scalingConstant/153)*127))
 		pitch = max(0, pitch)
-		print pitch
 		inst.notes.append(pretty_midi.Note(velocity, pitch, steps*0.6944, (steps+1)*0.6944))
 	steps = steps + 1
 
 pm.write('out2.mid')
 
-GPIO.output(23, GPIO.HIGH)
+GPIO.output(GPIO_NUM, GPIO.HIGH)
 time.sleep(0.1)
-GPIO.output(23, GPIO.LOW)
+GPIO.output(GPIO_NUM, GPIO.LOW)
 
 
 
