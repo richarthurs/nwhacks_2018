@@ -203,28 +203,29 @@ try:
 
 		dots = dots.tolist()
 
-		indices = []
-		for each in dots:
-			indices.append(np.floor(dot[0]/binSize))
-
+		indices = np.digitize([dot[0] for dot in dots], [i*binSize for i in range(1280/binSize)])
+		print "DSG"
 		lines = {}
 		for i in range(1280/binSize):
 			lines[i] = []
 
 		for i in range(len(dots)):
 			lines[indices[i]] = dots[i][1]
-		
+		print "DS1G"
 		if firstTry:
+			print "DSGexit"
 			history = lines
 		else:
 			# compare
-
+			print "D2SG"
 			n = 1280/binSize
 
 			while(True):
-				
+				print "DS3G"
 				percentMatches = []
 				for i in n:
+					print "DSG4"
+					print percentMatches
 					percentMatches.append(compareLines(lines[i], history[i-n], tolerance))
 		
 				averageMatch = sum(percentMatches)/float(len(percentMatches))
