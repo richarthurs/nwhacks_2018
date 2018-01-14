@@ -274,12 +274,13 @@ pm = pretty_midi.PrettyMIDI(initial_tempo=80)
 inst = pretty_midi.Instrument(program=0, is_drum=False, name='piano')
 pm.instruments.append(inst)
 
-velocity = 100
+velocity = 127
 
-int steps
-for key, in sorted(history.iterkeys()):
+steps = 0
+for key in sorted(history.iterkeys()):
 	for each in history[key]:
-		pitch = int((each*scalingConstant/153)*127)
+		pitch = min(127, int((each*scalingConstant/153)*127))
+		pitch = max(0, pitch)
 		print pitch
 		inst.notes.append(pretty_midi.Note(velocity, pitch, steps*0.6944, (steps+1)*0.6944))
 	steps = steps + 1
