@@ -103,7 +103,7 @@ if len(cnts) == 2:
 	scalingConstant = CALIBRATION_DISTANCE/np.hypot(dot2_coords[0] - dot1_coords[0], dot2_coords[1] - dot1_coords[1])
 
 	disp = (dot2_coords[0]-dot1_coords[0],dot2_coords[1] - dot2_coords[1])
-	unit = (disp[0]/np.hypot(disp[0], disp[1],disp[1]/np.hypot(disp[0], disp[1]))
+	unit = (disp[0]/np.hypot(disp[0], disp[1]),disp[1]/np.hypot(disp[0], disp[1]))
 
 	angle = 0
 	if abs(unit[0]) >= abs(unit[1]):
