@@ -198,10 +198,17 @@ try:
 				else: 
 					cX = 0
 					cY = 0
-		
-				dots = np.vstack((dots,np.dot(np.matrix([cX, cY]),rotationMatrix)))
+				dots = np.vstack((dots,np.matrix([cX, cY])))	
+				print(dots)	
+				#dots = np.vstack((dots,np.dot(np.matrix([cX, cY]),rotationMatrix)))
+				cv2.circle(frame2, (cX, cY), 3, (0,255, 0), -1)
 
+	        cv2.imshow("Frame2", frame2)
+	    	cv2.waitKey()
+
+		print dots
 		dots = dots.tolist()
+		print dots
 		print [i*binSize for i in range(1280/binSize)]
 		indices = np.digitize([dot[0] for dot in dots], [i*binSize for i in range(1280/binSize)])
 		print [dot[0] for dot in dots]
