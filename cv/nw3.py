@@ -64,9 +64,9 @@ for c in cnts:
     ((x,y), radius) = cv2.minEnclosingCircle(c)
     M = cv2.moments(c)
     if M["m00"] != 0:
-	centroid =np.matrix([int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"])])
+	centroid =(int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
     else: 
-	centroid =np.matrix([0,0])
+	centroid =(0,0)
 
     # draw circle and centroid, update tracked pts
     cv2.circle(frame, (int(x), int(y)), int(radius),
