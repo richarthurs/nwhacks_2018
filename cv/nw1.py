@@ -23,22 +23,26 @@ while go:
 		blurred = cv2.GaussianBlur(grey, (9,9), 0)
 		#thresh1 = cv2.threshold(blurred, 30, 255, cv2.THRESH_BINARY)[1]
 		thresh1 = cv2.adaptiveThreshold(blurred, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY, 115,1)
-		
+		thresh1 = cv2.bitwise_not(thresh1, thresh1)
 		# Process the contours: find the slots
-		contours = cv2.findContours(thresh1.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
-		# contours = contours[1] # the second tuple is correct for CV3
+		contours = cv2.findContours(thresh1.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+		contours = contours[1] # the second tuple is correct for CV3
 		#print contours
-		for c in contours:
-			print 'contours'
-			# find the centre
-			M = cv2.moments(c)
-			if M["m00"] is not 0:
-				cX = int(M["m10"] / M["m00"])
-				cY = int(M["m01"] / M["m00"])
-			
+		if (len(contours) > 0):
+			for c in contours:
+				print 'contours'
+				# find the centre
+				M = cv2.moments(c)
+				if M["m00"] != 0:
+					cX = int(M["m10"] / M["m00"])
+					cY = int(M["m01"] / M["m00"])
+				else: 
+					cX = 0
+					cY = 0
+				
 				# draw the contour and centre in the image
-				#cv2.drawContours(image, [c], -1, (0, 0, 255), 2)
-				cv2.circle(frame, (cX, cY), 7, (0,255, 0), -1)
+				#cv2.drawContours(frame, [c], -1, (0, 0, 255), 2)
+				cv2.circle(frame, (cX, cY), 3, (0,255, 0), -1)
 
 	        cv2.imshow("Frame", frame)
 	    	key = cv2.waitKey(1) & 0xFF
