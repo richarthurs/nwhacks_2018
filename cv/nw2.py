@@ -42,13 +42,16 @@ cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL,
 	cv2.CHAIN_APPROX_SIMPLE)[-2]
 centroid = None
 
-# only proceed if thr radius meets a min size
-if radius > 10:
-	# draw circle and centroid, update tracked pts
-	cv2.circle(frame, (int(x), int(y)), int(radius),
-		(0, 255, 255), 2)
-	cv2.circle(frame, centroid, 5, (0, 0, 255), -1)
-print centroid 
+for c in cnts:
+
+    ((x,y), radius) = cv2.minEnclosingCircle(c)
+    M = cv2.moments(c)
+    centroid = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
+
+    # draw circle and centroid, update tracked pts
+    cv2.circle(frame, (int(x), int(y)), int(radius),
+        (0, 255, 255), 2)
+    cv2.circle(frame, centroid, 5, (0, 0, 255), -1)
 
 cv2.imshow("Frame", frame)
 
