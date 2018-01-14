@@ -244,8 +244,8 @@ try:
 		cv2.drawContours(frame, [c], -1, (0, 0, 255), 2)
 		cv2.circle(frame, (cX, cY), 3, (0,255, 0), -1)
 	
-	    cv2.imshow("Frame", frame)
-	    key = cv2.waitKey(1) & 0xFF
+		cv2.imshow("Frame", frame)
+	    	key = cv2.waitKey(1) & 0xFF
 	
 		if key == ord("q"):
 			go = 0
