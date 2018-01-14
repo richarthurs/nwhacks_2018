@@ -26,7 +26,7 @@ try:
 	        # grab frame
 		grey = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 		blurred = cv2.GaussianBlur(grey, (3,3), 0)
-		thresh1 = cv2.threshold(blurred, 40, 255, cv2.THRESH_BINARY)[1]
+		thresh1 = cv2.threshold(blurred, 60, 255, cv2.THRESH_BINARY)[1]
 		#thresh1 = cv2.adaptiveThreshold(blurred, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY, 115,1)
 		thresh1 = cv2.bitwise_not(thresh1, thresh1)
 		
@@ -64,6 +64,7 @@ except Exception as e:
 	go = 0
 
 print "dots: --------------"
+dots = dots[~np.all(dots == 0, axis=1)] #https://stackoverflow.com/questions/11188364/remove-zero-lines-2-d-numpy-array
 print dots
 cv2.destroyAllWindows()
 
