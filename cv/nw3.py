@@ -8,6 +8,8 @@ import cv2
 import numpy as np
 import sys
 import pretty_midi
+import RPi.GPIO as GPIO
+
 
 # This script incorporates OpenCV usage from pyimagesearch.com to find the centroid
 # of a green object, and draw a circle around it using the Pi's built in camera.
@@ -50,6 +52,10 @@ def compareLines(line1, line2, tolerance):
 		return 1.0
 
 	return 1.0 - failed/attempted
+
+GPIO.setmode(GPIO.BOARD)
+GPIO.setup(23, GPIO.OUT)
+GPIO.output(23, GPIO.LOW)
 
 camera = PiCamera()
 camera.resolution = (1000,620)
@@ -286,6 +292,10 @@ for key in sorted(history.iterkeys()):
 	steps = steps + 1
 
 pm.write('out2.mid')
+
+GPIO.output(23, GPIO.HIGH)
+time.sleep(0.1)
+GPIO.output(23, GPIO.LOW)
 
 
 
