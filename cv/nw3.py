@@ -185,6 +185,8 @@ try:
 		# Process the contours: find the slots
 		contours = cv2.findContours(thresh1.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 		contours = contours[1] # the second tuple is correct for CV3
+		dots = np.array([])
+		
 		print 'contour length:', len(contours)
 		if (len(contours) > 0):
 			for c in contours:
@@ -197,40 +199,42 @@ try:
 					cX = 0
 					cY = 0
 	
-				dots = np.vstack((dots,np.multiply(np.matrix([cX, cY]),rotationMatrix))).tolist()
+				dots = np.vstack((dots,np.multiply(np.matrix([cX, cY]),rotationMatrix)))
 
-				indices = numpy.digitize([dot[0] for dot in dots], [i*binSize for i in range(1280.0/binSize)])
+		dots = dots.tolist()
 
-				lines = {}
+		indices = numpy.digitize([dot[0] for dot in dots], [i*binSize for i in range(1280.0/binSize)])
+
+		lines = {}
+		for i in range(1280.0/binSize):
+			lines[i] = []
+
+		for i in range(len(dots)):
+			lines[indices[i]] = dots[i][1]
+		
+		if firstTry:
+			history = lines
+		else:
+			# compare
+
+			n = 0
+
+			while(True):
+				percentMatches = []
 				for i in range(1280.0/binSize):
-					lines[i] = []
-
-				for i in range(len(dots)):
-					lines[indices[i]] = dots[i][1]
+					percentMatches.append(compareLines(lines[-(i+n)], history[-(i+n)], tolerance))
 				
-				if firstTry:
-					history = lines
-				else:
-					# compare
+				averageMatch = sum(percentMatches)/float(len(percentMatches))
 
-					n = 0
+				if (averageMatch >= threshold):
+					break
 
-					while(True):
-						percentMatches = []
-						for i in range(1280.0/binSize):
-							percentMatches.append(compareLines(lines[-(i+n)], history[-(i+n)], tolerance))
-						
-						averageMatch = sum(percentMatches)/float(len(percentMatches))
+				n = n + 1
 
-						if (averageMatch >= threshold):
-							break
+			for i in range(n):
+				history[len(history)] = lines[(n - i - 1)]
 
-						n = n + 1
-
-					for i in range(n):
-						history[len(history)] = lines[(n - i - 1)]
-
-				firstTry = False
+		firstTry = False
 
 except Exception as e:
 	print e
