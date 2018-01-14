@@ -150,7 +150,7 @@ else:
 	cal = 0
 	sys.exit()
 
-print 'ROTATION:', rotationMatrix
+#print 'ROTATION:', rotationMatrix
 cv2.destroyAllWindows()
 time.sleep(1)
 
@@ -166,7 +166,7 @@ try:
 		raw2 = PiRGBArray(camera)
 		camera.capture(raw2, format="bgr")
 		frame2 = raw2.array
-		print 'captured'
+	#	print 'captured'
 		#cv2.imshow("suh", frame2)
 		#cv2.waitKey(0)
 	        
@@ -186,7 +186,7 @@ try:
 		contours = cv2.findContours(thresh1.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 		contours = contours[1] # the second tuple is correct for CV3
 
-		print 'contour length:', len(contours)
+	#	print 'contour length:', len(contours)
 		if (len(contours) > 0):
 			for c in contours:
 				# find the centre
@@ -198,8 +198,6 @@ try:
 					cX = 0
 					cY = 0
 		
-				print rotationMatrix
-				print np.matrix([cX, cY])
 				dots = np.vstack((dots,np.dot(np.matrix([cX, cY]),rotationMatrix)))
 
 		dots = dots.tolist()
@@ -225,8 +223,7 @@ try:
 				
 				percentMatches = []
 				for i in range(n):
-			
-					print percentMatches
+
 					percentMatches.append(compareLines(lines[i], history[i-n], tolerance))
 		
 				averageMatch = sum(percentMatches)/float(len(percentMatches))
@@ -250,4 +247,4 @@ except Exception as e:
 
 cv2.destroyAllWindows()
 
-
+print history
