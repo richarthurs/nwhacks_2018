@@ -78,8 +78,9 @@ while(cal):
 	key = cv2.waitKey(1) & 0xFF
 
 	if key == ord("q"):
-		cv2.destroyAllWindows()
+		#cv2.destroyAllWindows()
 		cal = 0
+		print 'Calibration complete'
 
 if len(cnts) == 2:	
 	dot1 = cnts[0];
@@ -121,9 +122,12 @@ else:
 	cal = 0
 	sys.exit()
 
+
+
 try:
 	while(go):
-		cv2.waitKey(0)
+		
+#		cv2.waitKey(0)
 		camera.capture(raw, format="bgr")
 		frame = raw.array
 	
