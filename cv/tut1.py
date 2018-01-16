@@ -45,7 +45,7 @@ while 1:
 		centroid = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
 
 		# only proceed if thr radius meets a min size
-		if radius > 10:
+		if radius < 10:
 			# draw circle and centroid, update tracked pts
 			cv2.circle(frame, (int(x), int(y)), int(radius),
 				(0, 255, 255), 2)
